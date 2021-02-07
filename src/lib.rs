@@ -192,8 +192,10 @@ impl MmapOptions {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Safety
     pub unsafe fn map(&self, file: &File) -> Result<Mmap> {
-        MmapInner::map(self.get_len(file)?, file, self.offset).map(|inner| Mmap { inner: inner })
+        MmapInner::map(self.get_len(file)?, file, self.offset).map(|inner| Mmap { inner })
     }
 
     /// Creates a readable and executable memory map backed by a file.
@@ -202,9 +204,14 @@ impl MmapOptions {
     ///
     /// This method returns an error when the underlying system call fails, which can happen for a
     /// variety of reasons, such as when the file is not open with read permissions.
+    ///
+    /// # Safety
+    ///
+    /// This library is small wrapper around [libc::mmap](https://docs.rs/libc/0.2.85/libc/fn.mmap.html)
+    /// Please refer to the [manpage](https://man7.org/linux/man-pages/man2/mmap.2.html)
+    ///
     pub unsafe fn map_exec(&self, file: &File) -> Result<Mmap> {
-        MmapInner::map_exec(self.get_len(file)?, file, self.offset)
-            .map(|inner| Mmap { inner: inner })
+        MmapInner::map_exec(self.get_len(file)?, file, self.offset).map(|inner| Mmap { inner })
     }
 
     /// Creates a writeable memory map backed by a file.
@@ -240,9 +247,14 @@ impl MmapOptions {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Safety
+    ///
+    /// This library is small wrapper around [libc::mmap](https://docs.rs/libc/0.2.85/libc/fn.mmap.html)
+    /// Please refer to the [manpage](https://man7.org/linux/man-pages/man2/mmap.2.html)
+    ///
     pub unsafe fn map_mut(&self, file: &File) -> Result<MmapMut> {
-        MmapInner::map_mut(self.get_len(file)?, file, self.offset)
-            .map(|inner| MmapMut { inner: inner })
+        MmapInner::map_mut(self.get_len(file)?, file, self.offset).map(|inner| MmapMut { inner })
     }
 
     /// Creates a copy-on-write memory map backed by a file.
@@ -269,9 +281,12 @@ impl MmapOptions {
     /// # Ok(())
     /// # }
     /// ```
+    /// # Safety
+    ///
+    /// This library is small wrapper around [libc::mmap](https://docs.rs/libc/0.2.85/libc/fn.mmap.html)
+    /// Please refer to the [manpage](https://man7.org/linux/man-pages/man2/mmap.2.html)
     pub unsafe fn map_copy(&self, file: &File) -> Result<MmapMut> {
-        MmapInner::map_copy(self.get_len(file)?, file, self.offset)
-            .map(|inner| MmapMut { inner: inner })
+        MmapInner::map_copy(self.get_len(file)?, file, self.offset).map(|inner| MmapMut { inner })
     }
 
     /// Creates an anonymous memory map.
@@ -283,7 +298,7 @@ impl MmapOptions {
     ///
     /// This method returns an error when the underlying system call fails.
     pub fn map_anon(&self) -> Result<MmapMut> {
-        MmapInner::map_anon(self.len.unwrap_or(0), self.stack).map(|inner| MmapMut { inner: inner })
+        MmapInner::map_anon(self.len.unwrap_or(0), self.stack).map(|inner| MmapMut { inner })
     }
 }
 
@@ -364,6 +379,12 @@ impl Mmap {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Safety
+    ///
+    /// This library is small wrapper around [libc::mmap](https://docs.rs/libc/0.2.85/libc/fn.mmap.html)
+    /// Please refer to the [manpage](https://man7.org/linux/man-pages/man2/mmap.2.html)
+    ///
     pub unsafe fn map(file: &File) -> Result<Mmap> {
         MmapOptions::new().map(file)
     }
@@ -505,6 +526,12 @@ impl MmapMut {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Safety
+    ///
+    /// This library is small wrapper around [libc::mmap](https://docs.rs/libc/0.2.85/libc/fn.mmap.html)
+    /// Please refer to the [manpage](https://man7.org/linux/man-pages/man2/mmap.2.html)
+    ///
     pub unsafe fn map_mut(file: &File) -> Result<MmapMut> {
         MmapOptions::new().map_mut(file)
     }
